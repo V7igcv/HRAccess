@@ -2,48 +2,84 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $table = 'users';
+
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'username',
+        'password_hash',
+        'office_id',
+        'role_id',
+        'last_login_at'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
-        'password',
+        'password_hash',
         'remember_token',
     ];
 
+    protected $casts = [
+        'last_login_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Get the password for the user.
+     * This maps password_hash to Laravel's expected password field
      */
-    protected function casts(): array
+    public function getAuthPassword()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->password_hash;
+    }
+
+    /**
+     * Relationship: User belongs to an Office
+     */
+    public function office()
+    {
+        return $this->belongsTo(Office::class);
+    }
+
+    /**
+     * Relationship: User belongs to a Role
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Check if user is Super Admin
+     */
+    public function isSuperAdmin()
+    {
+        return $this->role && $this->role->name === 'SUPERADMIN';
+    }
+
+    /**
+     * Check if user is Office Admin
+     */
+    public function isOfficeAdmin()
+    {
+        return $this->role && $this->role->name === 'OFFICE ADMIN';
+    }
+
+    /**
+     * Update last login timestamp
+     */
+    public function updateLastLogin()
+    {
+        $this->update(['last_login_at' => now()]);
     }
 }
