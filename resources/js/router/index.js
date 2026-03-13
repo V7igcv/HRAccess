@@ -7,6 +7,7 @@ import OfficeAdminLayout from '../layouts/OfficeAdminLayout.vue';
 
 // Superadmin Pages
 import OfficeManagement from '../pages/superadmin/OfficeManagement.vue';
+import OfficeServices from '../pages/superadmin/OfficeServices.vue';
 import UserManagement from '../pages/superadmin/UserManagement.vue';
 
 // Office Admin Pages
@@ -40,6 +41,11 @@ const routes = [
                 path: 'users',
                 name: 'SuperAdminUsers',
                 component: UserManagement
+            },
+            {
+                path: 'offices/:id/services',
+                name: 'OfficeServices',
+                component: OfficeServices
             }
         ]
     },

@@ -17,7 +17,7 @@
       <Header :user="user" />
 
       <!-- Main Page View Content -->
-      <main class="flex-1 p-6 z-0 mt-8">
+      <main class="flex-1 p-6 z-0 mt-3">
         <router-view></router-view>
       </main>
     </div>
