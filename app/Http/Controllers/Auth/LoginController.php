@@ -105,9 +105,9 @@ class LoginController extends Controller
     {
         switch ($user->role->name) {
             case 'SUPERADMIN':
-                return '/superadmin/dashboard';
+                return '/superadmin';
             case 'OFFICE ADMIN':
-                return '/office/dashboard';
+                return '/officeadmin';
             default:
                 return '/dashboard';
         }

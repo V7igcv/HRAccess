@@ -93,7 +93,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { Eye, EyeOff } from 'lucide-vue-next'
+import axios from 'axios'
 
 const form = ref({
   username: '',
@@ -104,24 +106,39 @@ const showPassword = ref(false)
 const loading = ref(false)
 const error = ref('')
 
+const router = useRouter()
+
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 
 const handleLogin = async () => {
-  // Frontend only for now
   loading.value = true
   error.value = ''
   
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    console.log('Login attempt with:', form.value)
+    const response = await axios.post('/api/login', {
+      username: form.value.username,
+      password: form.value.password
+    }, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
     
-    // For testing frontend, just show error or success
-    // error.value = 'Invalid username or password'
+    // Store the token and user data
+    localStorage.setItem('auth_token', response.data.token)
+    localStorage.setItem('user', JSON.stringify(response.data.user))
+    
+    // Redirect based on the backend's response
+    router.push(response.data.redirect_to)
+    
   } catch (err) {
-    error.value = 'An error occurred during login'
+    if (err.response && err.response.data && err.response.data.message) {
+      error.value = err.response.data.message
+    } else {
+      error.value = 'An error occurred during login. Please try again.'
+    }
   } finally {
     loading.value = false
   }
