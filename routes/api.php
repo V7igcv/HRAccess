@@ -10,7 +10,7 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/logout', [LoginController::class, 'logout']);
-    Route::get('/me', [LoginController::class, 'me']);
+    Route::get('/user', [LoginController::class, 'user']);
     
     // Test route to verify authentication
     Route::get('/test-auth', function () {

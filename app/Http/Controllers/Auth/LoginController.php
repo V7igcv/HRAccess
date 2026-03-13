@@ -79,7 +79,7 @@ class LoginController extends Controller
     /**
      * Get the authenticated user.
      */
-    public function me(Request $request)
+    public function user(Request $request)
     {
         $user = $request->user()->load('role', 'office');
         
